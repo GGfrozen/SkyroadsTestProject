@@ -2,9 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UImanager : MonoBehaviour
+public class UImanager : MonoBehaviour,IPointerClickHandler
 {
     public Action OnLevelReset = delegate { };
 
@@ -57,6 +58,9 @@ public class UImanager : MonoBehaviour
     [Header("SettingsPanel")]
     [SerializeField] CanvasGroup settingsPanel;
     [SerializeField] Slider volumeSlider;
+    [SerializeField] private Slider effectSlider;
+    [SerializeField] private Toggle muteToogle;
+    [SerializeField] private AudioClip clickSound;
 
     Spaceship spaceship;
 
@@ -106,16 +110,28 @@ public class UImanager : MonoBehaviour
     {
         Time.timeScale = 0;
         settingsPanel.gameObject.SetActive(true);
-        volumeSlider.value = AudioManager.Instance.GetVolume() * volumeSlider.maxValue;
+        volumeSlider.value = AudioManager.Instance.GetMusicVolume() * volumeSlider.maxValue;
+        effectSlider.value = AudioManager.Instance.GetEffectsVolume() * effectSlider.maxValue;
     }
     public void CloseSettingPanel()
     {
         Time.timeScale = 1;
         settingsPanel.gameObject.SetActive(false);
     }
-    public void VolumeChange()
+    public void MusicVolumeChange()
     {
-        AudioManager.Instance.SetVolume(volumeSlider.value / volumeSlider.maxValue);
+        AudioManager.Instance.SetMusicVolume(volumeSlider.value / volumeSlider.maxValue);
+    }
+
+    public void EffectVolumeChange()
+    {
+        AudioManager.Instance.SetEffectsVolume(effectSlider.value/effectSlider.maxValue);
+    }
+
+    public void MuteAll()
+    {
+        var volumeState = muteToogle.isOn;
+        AudioListener.pause = volumeState;
     }
     public void ShowCongratsText()
     {
@@ -125,6 +141,17 @@ public class UImanager : MonoBehaviour
     {
         StartCoroutine(EnableLosePanel(waitTime));
     }
+    
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        //AudioManager.Instance.PlayEffect(clickSound);
+    }
+
+    public void OnClick()
+    {
+        AudioManager.Instance.PlayEffect(clickSound);
+    }
+
     private void Start()
     {
         SetStartBestScore();
@@ -170,4 +197,5 @@ public class UImanager : MonoBehaviour
         mainBestScore.text = "BEST SCORE : " + PlayerPrefs.GetInt("BestScore", 0);
     }
 
+    
 }

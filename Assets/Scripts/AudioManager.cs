@@ -27,18 +27,31 @@ public class AudioManager : MonoBehaviour
     [SerializeField] AudioSource effectsPlayer;
 
     private const string PREFS_MUSIC_VOLUME = "Volume";
+    private const string PREFS_EFFECTS_VOLUME = "Effects";
+    
     public void PlayEffect(AudioClip effect)
     {
         effectsPlayer.PlayOneShot(effect);
     }
-    public void SetVolume(float volume)
+    public void SetMusicVolume(float volume)
     {
         musicPlayer.volume = volume;
-        effectsPlayer.volume = volume;
         PlayerPrefs.SetFloat(PREFS_MUSIC_VOLUME, volume);
     }
-    public float GetVolume()
+
+    public void SetEffectsVolume(float volume)
+    {
+        effectsPlayer.volume = volume;
+        PlayerPrefs.SetFloat(PREFS_EFFECTS_VOLUME, volume);
+    }
+    public float GetMusicVolume()
     {
         return musicPlayer.volume;
     }
+
+    public float GetEffectsVolume()
+    {
+        return effectsPlayer.volume;
+    }
+    
 }
